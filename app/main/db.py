@@ -1,37 +1,7 @@
 import json
-import os
-
-from flask import Flask
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-
-# basedir = os.path.abspath(os.path.dirname(__file__))
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(
-#     basedir, "data.sqlite"
-# )
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-
-@app.shell_context_processor
-def make_shell_context():
-    return dict(db=db, Channel=Channel)
-
-
-def empty_json():
-    """
-    Lazy default for the users column.
-    """
-    return json.dumps([])
-
-
-class Channel(db.Model):
-    channel = db.Column(db.String, primary_key="True")
-    users = db.Column(db.JSON, default=empty_json())
-
+from random import choice
+from .. import db
+from ..models import Channel
 
 no_channel = """\
 This channel has not been initialized yet.
@@ -77,6 +47,7 @@ def append_users(channel: str, *users_to_add: str):
     c.users = json.dumps(users)
     db.session.add(c)
     db.session.commit()
+    return "User(s) added."
 
 
 def insert_user(channel, user, index=0):
@@ -87,13 +58,15 @@ def insert_user(channel, user, index=0):
     if not c:
         return no_channel
     users = json.loads(c.users)
+    print(f"users before insertion: {users}")
     users.insert(index, user)
+    print(f"users after insertion: {users}")
     c.users = json.dumps(users)
     db.session.add(c)
     db.session.commit()
 
 
-def delete(channel: str, *users_to_delete: str) -> str:
+def delete(channel: str, *users_to_delete: list) -> str:
     """
     Removes users from the specified channe's user list.
     """
@@ -101,9 +74,16 @@ def delete(channel: str, *users_to_delete: str) -> str:
     if not c:
         return no_channel
     users = json.loads(c.users)
-    for user in users_to_delete:
-        users.remove(user)
-    c.users = json.dumps(users)
+
+    if users_to_delete[0] == "all":
+        c.users = json.dumps([])
+    else:
+        for user in users_to_delete:
+            try:
+                users.remove(user)
+            except ValueError:
+                continue
+        c.users = json.dumps(users)
     db.session.add(c)
     db.session.commit()
     return "User(s) deleted."
@@ -139,10 +119,26 @@ def bump(channel: str) -> str:
     return f"Moved {user} to second position."
 
 
-def edit(channel: str, users: list) -> str:
+def random_user(channel: str) -> str:
+    """
+    Select a random user from the specified channel's user list.
+    Does not modify order.
+    """
+    c = Channel.query.get(channel)
+    if not c:
+        return no_channel
+    users = json.loads(c.users)
+    if len(users) == 0:
+        return "No users to randomly select from."
+    return f"Selecting a random user:\n{choice(users)}"
+
+
+def edit(channel: str, *users: list) -> str:
     """
     Replace the user list for the specified channel with the provided list.
     """
+    if len(users) == 0:
+        return "No new user list provided."
     c = Channel.query.get(channel)
     if not c:
         return no_channel

@@ -1,3 +1,7 @@
+import json
+from . import db
+
+
 def empty_json():
     """
     Lazy default for the users column.
