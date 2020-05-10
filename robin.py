@@ -12,8 +12,6 @@ def make_shell_context():
     return dict(db=db, Channel=Channel)
 
 
-# @app.command
-# @app.cli.command()
 @app.cli.command()
 def deploy():
     upgrade()
