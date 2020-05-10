@@ -18,6 +18,11 @@ usage = """\
 """
 
 
+@main.route("/health")
+def health():
+    return 200
+
+
 @main.route("/", methods=["POST"])
 def receiver():
     """
