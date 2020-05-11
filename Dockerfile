@@ -10,9 +10,14 @@ USER robin
 
 WORKDIR /home/robin
 
-COPY . .
+COPY --chown=robin:1000 . .
+# COPY requirements requirements
 RUN python -m venv venv
 RUN venv/bin/pip install -r requirements/docker.txt
 
+# COPY app app
+# COPY migrations migrations
+# COPY robin.py config.py boot.sh ./
+
 EXPOSE 5000
-ENTRYPOINT [".boot.sh""]
+ENTRYPOINT ["./boot.sh"]
