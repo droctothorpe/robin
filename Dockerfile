@@ -12,8 +12,7 @@ WORKDIR /home/robin
 
 COPY . .
 RUN python -m venv venv
-RUN venv/bin/pip install -r requirements.txt
+RUN venv/bin/pip install -r requirements/docker.txt
 
 EXPOSE 5000
-ENTRYPOINT /bin/ash
-CMD gunicorn -b :5000 --access-logfile - --error-logfile - robin:app
+ENTRYPOINT [".boot.sh""]
