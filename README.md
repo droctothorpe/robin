@@ -65,3 +65,47 @@ Click `Save Changes` in the lower-right hand corner.
 Go to the specified Slack workspace and type `robin`. You should see a usage dialog. 
 
 That's it!
+
+## Local Development
+
+Install Miniconda.
+```bash
+brew cask install miniconda
+```
+
+Create a new conda environment for Robin.
+```bash
+conda create -n robin -f requirements/local.txt -y
+```
+
+Activate the environment.
+```bash
+conda activate robin
+```
+
+Run the migration.
+```bash
+flask run deploy
+```
+
+Start the API.
+```bash
+flask run --cert=adhoc
+```
+
+Validate that the server is running.
+```bash
+open http://localhost:5000/health
+```
+
+To link the local application to your Slack channel for validation purposes, install ngrok.
+```bash
+brew install ngrok
+```
+
+Run ngrok.
+```bash
+ngrok http https://localhost:5000
+```
+
+Copy the `https` URL and use it as the backend for your slash command per the instructions [here](#slack-configuration).
