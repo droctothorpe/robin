@@ -10,4 +10,8 @@ while true; do
     sleep 5
 done
 
-exec gunicorn -b :5000 --access-logfile - --error-logfile - flasky:app
+exec gunicorn -b :5000 --access-logfile - --error-logfile - robin:app \
+--worker-tmp-dir /dev/shm \
+--workers=2 \
+--threads=4 \
+--worker-class=gthread

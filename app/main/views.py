@@ -18,9 +18,14 @@ usage = """\
 """
 
 
+@main.route("/")
+def index():
+    return "index"
+
+
 @main.route("/health")
 def health():
-    return 200
+    return "healthy"
 
 
 @main.route("/", methods=["POST"])
