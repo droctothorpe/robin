@@ -5,3 +5,6 @@ nodes.md
 !.elasticbeanstalk/*.global.yml
 .env
 .vscode
+pycache
+__pycache__
+*/__pycache__

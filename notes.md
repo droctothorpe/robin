@@ -1,3 +1,6 @@
 * Add logs
 * Add terraform file
-* Add help command
+* Add unit tests
+* Address problem with deploy
+
+
