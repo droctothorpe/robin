@@ -15,6 +15,7 @@ usage = """\
 - */robin delete <user1> <user2>* -- Delete users from the list.
 - */robin delete all* -- Delete all users from the list.
 - */robin edit* -- Pass in a list of users that are comma, space, or line break delimited and it will replace the existing list. Provides more granular control.
+- */robin temp <user1> <user2>* -- Select a random user from a temporary, user-provided input list. 
 """
 
 
@@ -64,12 +65,16 @@ def receiver():
         "bump": lambda: db.bump(channel),
         "random": lambda: db.random_user(channel),
         "edit": lambda: db.edit(channel, *args[1:]),
+        "temp": lambda: db.temp(*args[1:]),
     }
 
     func = switcher.get(subcommand)
 
     if not func:
-        return render_response(usage, "ephemeral")
+        return render_response(
+            "Invalid subcommand. Use `/robin` to view valid commands.",
+            "ephemeral",
+        )
 
     msg = func()
 

@@ -148,5 +148,14 @@ def edit(channel: str, *users: list) -> str:
     return "User list updated."
 
 
+def temp(*users: list) -> str:
+    """
+    Select a random user from a temporary, user-provided list.
+    """
+    if len(users) == 0:
+        return "No users to randomly select from."
+    return f"Selecting a random user from the provided list:\n{choice(users)}"
+
+
 if __name__ == "__main__":
     breakpoint()
